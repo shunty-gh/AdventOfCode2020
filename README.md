@@ -34,3 +34,20 @@ $> dotnet run -- -days 1 3 16
 ```
 
 The ```--``` is needed on the command line to indicate to the `dotnet run` command that further parameters should be passed to the compiled code rather than processed by the dotnet command.
+
+#### Build with older dotnet core
+It is (probably) possible to build and run all the code using the older Dotnet Core 3.1 SDK.
+Replace
+```
+<TargetFramework>net5.0</TargetFramework>
+```
+with
+```
+<TargetFramework>netcoreapp3.1</TargetFramework>
+```
+or
+```
+<TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
+```
+
+When supplying multiple target frameworks you need to specify which framework to use with the `--framework net5.0` or `--framework netcoreapp3.1` on the command line just after the `dotnet run` command.
