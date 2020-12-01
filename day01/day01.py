@@ -1,8 +1,8 @@
-import math
+with open("./day01-input.txt", "r") as f:
+    input = [int(line) for line in f.readlines()]
 
-f = open("./day01-input.txt", "r")
-input = [int(line) for line in f.readlines()]
-f.close()
+# Should really check if i = j and i = j = k
+# but assume it won't happen
 
 p1 = 0; p2 = 0
 for i in input:
