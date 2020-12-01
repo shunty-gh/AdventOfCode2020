@@ -12,30 +12,23 @@ namespace Shunty.AdventOfCode2020
 
         public async Task Execute(ILogger logger)
         {
-            var input = AoCUtils.GetDayLines(Day).Select(i => Int64.Parse(i)).ToList();
+            var input = AoCUtils.GetDayLines(Day).Select(i => Int64.Parse(i));
             Int64 part1 = 0, part2 = 0;
-            for (var i = 0; i < input.Count; i++)
+            foreach (var i in input)
             {
-                for (var j = 0; j < input.Count; j++)
+                foreach (var j in input)
                 {
-                    if (i == j)
-                        continue;
-
-                    if (part1 == 0)
-                    {
-                        if (input[i] + input[j] == 2020)
-                        {
-                            part1 = input[i] * input[j];
-                        }
-                    }
+                    if (part1 == 0 && i + j == 2020)
+                        part1 = i * j;
 
                     if (part2 == 0)
                     {
-                        for (var k = 0; k < input.Count; k++)
+                        foreach (var k in input)
                         {
-                            if (input[i] + input[j] + input[k] == 2020)
+                            if (i + j + k == 2020)
                             {
-                                part2 = input[i] * input[j] * input[k];
+                                part2 = i * j * k;
+                                break;
                             }
                         }
                     }
@@ -43,6 +36,8 @@ namespace Shunty.AdventOfCode2020
                     if (part1 > 0 && part2 > 0)
                         break;
                 }
+                if (part1 > 0 && part2 > 0)
+                    break;
             }
 
             AnsiConsole.MarkupLine($"[white]Day [blue]{Day}[/]; Part [blue]1[/]:[/] [yellow]{part1}[/]");
