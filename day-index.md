@@ -13,6 +13,9 @@ So that I can find specific types of approach if I ever need them again.
 |------------------------------------------|----------|-------|
 | https://github.com/... | ... | |
 
-### Day 1 -
+### Day 1 - Report Repair
+Compare/add/multiply items in list of numbers
 
-### Day 2 -
+
+### Day 2 - Password Philosophy
+Splitting strings, comparing and counting characters
