@@ -1,4 +1,6 @@
-with open("./day01-input.txt", "r") as f:
+import os
+
+with open(os.path.dirname(os.path.realpath(__file__)) + "/day01-input.txt", "r") as f:
     input = [int(line) for line in f.readlines()]
 
 # Should really check if i = j and i = j = k

@@ -1,8 +1,9 @@
 import re
+import os
 
 pattern = r'^(\d+)-(\d+) (\w): (\w+)$'
 
-with open("./day02-input.txt", "r") as f:
+with open(os.path.dirname(os.path.realpath(__file__)) + "/day02-input.txt", "r") as f:
     matches = [re.match(pattern, line) for line in f.readlines()]
 
 p1 = 0; p2 = 0
