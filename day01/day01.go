@@ -1,26 +1,16 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"log"
-	"os"
-	"strconv"
+
+	aocutils "../common"
 )
 
 func main() {
-	file, err := os.Open("./day01-input.txt")
+	input, err := aocutils.GetInputIntegers("./day01-input.txt")
 	if err != nil {
 		log.Fatal(err)
-	}
-	defer file.Close()
-
-	// Get a list of integer values
-	var input []int
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		val, _ := strconv.Atoi(scanner.Text())
-		input = append(input, val)
 	}
 
 	var p1, p2 = 0, 0
