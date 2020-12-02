@@ -19,8 +19,7 @@ func main() {
 
 	for _, s := range input {
 		var splits = strings.Split(s, " ")
-		var rule, ch, pwd = splits[0], strings.Trim(splits[1], ":"), splits[2]
-		var rules = strings.Split(rule, "-")
+		var rules, ch, pwd = strings.Split(splits[0], "-"), strings.Trim(splits[1], ":"), splits[2]
 		ruleA, _ := strconv.Atoi(rules[0])
 		ruleB, _ := strconv.Atoi(rules[1])
 

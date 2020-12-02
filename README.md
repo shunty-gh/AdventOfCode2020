@@ -1,6 +1,6 @@
 # Advent Of Code 2020
 
-Some code to help find solutions to the [AdventOfCode 2020](https://adventofcode.com/).
+Some code to help find solutions to the [AdventOfCode 2020](https://adventofcode.com/2020).
 
 ## C#
 The C# code is written using [.Net 5](https://dotnet.microsoft.com/download/dotnet/5.0). As such it is cross-platform so should run anywhere that
@@ -55,7 +55,7 @@ When supplying multiple target frameworks you need to specify which framework to
 ## Python
 
 ### Pre-requisites
-* A working installation of Python!    
+* A working installation of Python!
   Python 3 was used but some (all?) of the scripts will work ok with Python 2.
 
 To run the Python scripts (where XX is 01, 02 etc):
@@ -75,7 +75,7 @@ $> python3 ./dayXX/dayXX.py
 ## Go
 
 ### Pre-requisites
-* A working installation of [Go](https://golang.org/)!    
+* A working installation of [Go](https://golang.org/)!
   Code was written using Go 1.15.x.
 
 To run the Go programs (where XX is 01, 02 etc):
