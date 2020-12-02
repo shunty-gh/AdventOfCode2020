@@ -47,7 +47,7 @@ namespace Shunty.AdventOfCode2020
         {
             // If "all" is true then create a list of all days up to the current day
             var dd = all
-                ? Enumerable.Range(1, DateTime.Today.Month == 12 ? Math.Max(25, DateTime.Today.Day) : 25)
+                ? Enumerable.Range(1, DateTime.Today.Month == 12 ? Math.Min(25, DateTime.Today.Day) : 25)
                 : NormaliseDays(days);
 
             AnsiConsole.WriteLine();
