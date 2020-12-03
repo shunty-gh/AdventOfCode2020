@@ -11,10 +11,17 @@ namespace Shunty.AdventOfCode2020
     {
         public int Day => 3;
 
-        public async Task Execute(ILogger logger)
+        public async Task Execute(ILogger logger, bool useTestData)
         {
-            var input = AoCUtils.GetDayLines(Day);
-            //var input = AoCUtils.GetTestLines(Day);
+            var input = useTestData 
+                ? AoCUtils.GetTestLines(Day)
+                : AoCUtils.GetDayLines(Day);
+            if (!input.Any())
+            {
+                AnsiConsole.MarkupLine($"[red]Error Day [blue]{Day}[/]: No {(useTestData ? "test " : "")}input available[/]");
+                return;
+            }
+
             var map = ReadMap(input);
 
             var part1 = Traverse(map, (3,1));
@@ -35,7 +42,7 @@ namespace Shunty.AdventOfCode2020
             await Task.CompletedTask;
         }
 
-        private int Traverse(Dictionary<(int X,int Y), char> map, (int dX, int dY) route)
+        private static int Traverse(Dictionary<(int X,int Y), char> map, (int dX, int dY) route)
         {
             var result = 0;
             (int X, int Y) current = (0,0);
@@ -53,7 +60,7 @@ namespace Shunty.AdventOfCode2020
             return result;
         }
 
-        private Dictionary<(int X,int Y), char> ReadMap(IList<string> lines)
+        private static Dictionary<(int X,int Y), char> ReadMap(IList<string> lines)
         {
             var result = new Dictionary<(int,int), char>();
             for (var y = 0; y < lines.Count; y++)

@@ -43,7 +43,7 @@ namespace Shunty.AdventOfCode2020
         /// <summary>
         /// The handler for the main RootCommand object
         /// </summary>
-        private static async Task RunSelectedDays(IEnumerable<int> days, bool all)
+        private static async Task RunSelectedDays(IEnumerable<int> days, bool test, bool all)
         {
             // If "all" is true then create a list of all days up to the current day
             var dd = all
@@ -53,7 +53,7 @@ namespace Shunty.AdventOfCode2020
             AnsiConsole.WriteLine();
             SpanglyTitle("Advent Of Code 2020");
             AnsiConsole.WriteLine();
-            AnsiConsole.MarkupLine($"[bold invert] Attempting to run day{(dd.Count() > 1 ? "s" : "")} {string.Join(",", dd)} [/]");
+            AnsiConsole.MarkupLine($"[bold invert] Attempting to {(test ? "TEST" : "run")} day{(dd.Count() > 1 ? "s" : "")} {string.Join(",", dd)} [/]");
             AnsiConsole.WriteLine();
             foreach (var day in dd)
             {
@@ -66,7 +66,7 @@ namespace Shunty.AdventOfCode2020
                 }
 
                 AnsiConsole.MarkupLine($"[white]-> day [yellow]{day}[/][/]");
-                await dr.Execute(logger);
+                await dr.Execute(logger, test);
                 AnsiConsole.WriteLine();
             }
         }
@@ -84,8 +84,7 @@ namespace Shunty.AdventOfCode2020
             {
                 if (typeof(IAoCRunner).IsAssignableFrom(type) && type != typeof(IAoCRunner))
                 {
-                    var dr = Activator.CreateInstance(type) as IAoCRunner;
-                    if (dr != null)
+                    if (Activator.CreateInstance(type) is IAoCRunner dr)
                     {
                         result.Add(dr);
                     }
@@ -103,7 +102,7 @@ namespace Shunty.AdventOfCode2020
             // Make sure we have a valid list of days. Default to the current day
             // if we are in December or 25th if not.
 
-            if (source == null || source.Count() == 0)
+            if (source == null || !source.Any())
                 return new List<int> { DateTime.Today.Month == 12 ? Math.Min(25, DateTime.Today.Day) : 25 };
 
             return source
@@ -132,8 +131,11 @@ namespace Shunty.AdventOfCode2020
                 new Option<IEnumerable<int>>(
                     new string[] { "--days", "-d" },
                     "Specify which days to run (from 1 to 25) separated by space(s)"),
+                new Option<bool>(
+                    new string[] { "--test", "-t" },
+                    "Run with test data, if available"),
             };
-            rootcmd.Handler = CommandHandler.Create<List<int>, bool>(RunSelectedDays);
+            rootcmd.Handler = CommandHandler.Create<List<int>, bool, bool>(RunSelectedDays);
             return rootcmd;
         }
 

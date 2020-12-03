@@ -12,9 +12,16 @@ namespace Shunty.AdventOfCode2020
     {
         public int Day => 2;
 
-        public async Task Execute(ILogger logger)
+        public async Task Execute(ILogger logger, bool useTestData)
         {
-            var input = AoCUtils.GetDayLines(Day);
+            var input = useTestData
+                ? AoCUtils.GetTestLines(Day)
+                : AoCUtils.GetDayLines(Day);
+            if (!input.Any())
+            {
+                AnsiConsole.MarkupLine($"[red]Error Day [blue]{Day}[/]: No {(useTestData ? "test " : "")}input available[/]");
+                return;
+            }
             int part1 = 0, part2 = 0;
 
             foreach (var line in input)

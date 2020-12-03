@@ -30,8 +30,17 @@ $> dotnet run -- -a
 or, to run specific day or days (if available):
 
 ```
-$> dotnet run -- -days 1 3 16
+$> dotnet run -- --days 1 3 16
+or
+$> dotnet run -- -d 1 3 16
 ```
+
+or, to run using test data (if supplied) rather than real puzzle data:
+```
+$> dotnet run -- -d 1 -t
+```
+Test data should be supplied in a file in the same directory as the real data and in the same content format, with a file name of `dayXX-input-test.txt` (where XX is the day number eg 01, 02, 23 etc)
+
 
 The ```--``` may be needed on the command line to indicate to the `dotnet run` command that further parameters should be passed to the compiled code rather than processed by the dotnet command.
 

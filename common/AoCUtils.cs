@@ -50,10 +50,14 @@ namespace Shunty.AdventOfCode2020
        public static IList<string> GetTestLines(int day, int part = 0)
         {
             var fname = FindInput(day, part);
-            // Replace final part of file name
-            fname = fname.Replace("-input.txt", "-input-test.txt");
             if (string.IsNullOrWhiteSpace(fname))
                 throw new FileNotFoundException($"Unable to find input test file for day {day}{(part > 0 ? $" and part {part}" : "")}");
+
+            // Replace final part of file name
+            fname = fname.Replace("-input.txt", "-input-test.txt");
+            // If it doesn't exist just return an empty list
+            if (!File.Exists(fname))
+                return new List<string>();
 
             return File.ReadAllLines(fname)
                 .ToList();
