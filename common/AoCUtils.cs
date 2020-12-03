@@ -47,6 +47,18 @@ namespace Shunty.AdventOfCode2020
                 .ToList();
         }
 
+       public static IList<string> GetTestLines(int day, int part = 0)
+        {
+            var fname = FindInput(day, part);
+            // Replace final part of file name
+            fname = fname.Replace("-input.txt", "-input-test.txt");
+            if (string.IsNullOrWhiteSpace(fname))
+                throw new FileNotFoundException($"Unable to find input test file for day {day}{(part > 0 ? $" and part {part}" : "")}");
+
+            return File.ReadAllLines(fname)
+                .ToList();
+        }
+
         /// <summary>
         /// Read and return the input for the given day (and optional part) as a single string
         /// </summary>
