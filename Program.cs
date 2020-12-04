@@ -4,9 +4,11 @@ using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 using Spectre.Console;
 
@@ -16,6 +18,23 @@ namespace Shunty.AdventOfCode2020
     {
         static IEnumerable<IAoCRunner> AvailableDays;
         static ILogger logger;
+
+        private static IConfiguration _config;
+        private static IConfiguration Configuration
+        {
+            get
+            {
+                if (_config == null)
+                {
+                    _config = new ConfigurationBuilder()
+                        .AddEnvironmentVariables()
+                        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                        .AddJsonFile($"appsettings.private.json", optional: true)
+                        .Build();
+                }
+                return _config;
+            }
+        }
 
         static async Task Main(string[] args)
         {
@@ -66,14 +85,14 @@ namespace Shunty.AdventOfCode2020
                 }
 
                 AnsiConsole.MarkupLine($"[white]-> day [yellow]{day}[/][/]");
-                await dr.Execute(logger, test);
+                await dr.Execute(Configuration, logger, test);
                 AnsiConsole.WriteLine();
             }
         }
 
         /// <summary>
         /// Return a list of created instances of all classes in this assembly that
-        /// implement the IDayRunner interface
+        /// implement the IAoCRunner interface
         /// </summary>
         private static IEnumerable<IAoCRunner> LoadDays()
         {

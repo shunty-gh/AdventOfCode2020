@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 using Spectre.Console;
 
@@ -11,9 +12,11 @@ namespace Shunty.AdventOfCode2020
     {
         public int Day => 3;
 
-        public async Task Execute(ILogger logger, bool useTestData)
+        public async Task Execute(IConfiguration config, ILogger logger, bool useTestData)
         {
-            var input = useTestData 
+            await AoCUtils.GetDayInput(config, Day, "");
+
+            var input = useTestData
                 ? AoCUtils.GetTestLines(Day)
                 : AoCUtils.GetDayLines(Day);
             if (!input.Any())
