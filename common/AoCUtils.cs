@@ -2,6 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace Shunty.AdventOfCode2020
 {
@@ -75,6 +79,35 @@ namespace Shunty.AdventOfCode2020
                 throw new FileNotFoundException($"Unable to find input file for day {day}{(part > 0 ? $" and part {part}" : "")}");
 
             return File.ReadAllText(fname);
+        }
+
+        public static async Task GetDayInput(IConfiguration config, int day, string basePath, bool force = false)
+        {
+            var fname = Path.Combine(".", $"day{day:D2}", $"day{day:D2}-input.txt");
+           // Does the file exist already?
+            if (!force && File.Exists(fname))
+            {
+                return;
+            }
+
+            var year = 2020;
+            var baseAddress = new Uri("https://adventofcode.com/");
+            var urlfragment = $"{year}/day/{day}/input";
+            var cookies = new CookieContainer();
+            using (var handler = new HttpClientHandler { CookieContainer = cookies })
+            using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
+            {
+                cookies.Add(baseAddress, new Cookie("session", config["sessionCookie"]));
+                var response = await client.GetAsync(urlfragment);
+                //response.EnsureSuccessStatusCode();
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    Console.WriteLine($"Input file for day {day} not available");
+                    return;
+                }
+                var content = await response.Content.ReadAsStringAsync();
+                await File.WriteAllTextAsync(fname, content);
+            }
         }
     }
 }

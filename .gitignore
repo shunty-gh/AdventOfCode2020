@@ -10,3 +10,5 @@ bin/
 **/debug
 obj/
 *.nuget.*
+
+appsettings.private.json
