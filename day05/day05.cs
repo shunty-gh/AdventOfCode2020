@@ -22,15 +22,26 @@ namespace Shunty.AdventOfCode2020
             {
                 AnsiConsole.MarkupLine($"[red]Error Day [blue]{Day}[/]; Part [blue]1[/]: No {(useTestData ? "test " : "")}input available[/]");
             }
-            var part1 = 0;
-            var part2 = 0;
 
-            part1 = input.Max(l =>
+            var seats = input.Select(l =>
                 Convert.ToInt32(l.Replace('F', '0')
                     .Replace('B', '1')
                     .Replace('L', '0')
                     .Replace('R', '1'), 2)
-            );
+                )
+                .OrderBy(i => i)
+                .ToList();
+            var part1 = seats.Max();
+            int part2 = 0, lastseat = 0;
+            foreach (var seat in seats)
+            {
+                if (lastseat + 2 == seat)
+                {
+                    part2 = seat - 1;
+                    break;
+                }
+                lastseat = seat;
+            }
             AnsiConsole.MarkupLine($"[white]Day [blue]{Day}[/]; Part [blue]1[/]:[/] [yellow]{part1}[/]");
             AnsiConsole.MarkupLine($"[white]Day [blue]{Day}[/]; Part [blue]2[/]:[/] [yellow]{part2}[/]");
 
