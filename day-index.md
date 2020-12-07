@@ -34,7 +34,8 @@ Convert string to binary
 ### Day 6 - Custom Customs
 Character processing in strings, Distinct/Intersection
 
-### Day 7 -
+### Day 7 - Handy Haversacks
+Parent/child relationships. Find parents for child, count children. Recursion (not obligatory).
 
 ### Day 8 -
 
