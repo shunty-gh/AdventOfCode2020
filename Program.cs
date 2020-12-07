@@ -4,7 +4,6 @@ using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -20,7 +19,7 @@ namespace Shunty.AdventOfCode2020
         static ILogger logger;
 
         private static IConfiguration _config;
-        private static IConfiguration Configuration
+        public static IConfiguration Configuration
         {
             get
             {
@@ -76,6 +75,8 @@ namespace Shunty.AdventOfCode2020
             AnsiConsole.WriteLine();
             foreach (var day in dd)
             {
+                try
+                {
                 // Find the appropriate IDayRunner, if one exists, and run it
                 var dr = AvailableDays?.FirstOrDefault(d => d.Day == day);
                 if (dr == null)
@@ -87,6 +88,15 @@ namespace Shunty.AdventOfCode2020
                 AnsiConsole.MarkupLine($"[white]-> day [yellow]{day}[/][/]");
                 await dr.Execute(Configuration, logger, test);
                 AnsiConsole.WriteLine();
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "Error running AoC day(s) {@DayNumbers}", dd);
+                    AnsiConsole.MarkupLine($"[red] Error running day {day}[/]");
+                    AnsiConsole.MarkupLine($"[red] {ex.Message}[/]");
+                    //AnsiConsole.WriteException(ex);
+                    AnsiConsole.WriteLine();
+                }
             }
         }
 

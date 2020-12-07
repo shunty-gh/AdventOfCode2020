@@ -14,10 +14,7 @@ namespace Shunty.AdventOfCode2020
 
         public async Task Execute(IConfiguration config, ILogger logger, bool useTestData)
         {
-            await AoCUtils.GetDayInput(config, Day, "");
-            var input = useTestData
-                ? AoCUtils.GetTestLines(Day)
-                : AoCUtils.GetDayLines(Day);
+            var input = await AoCUtils.GetDayLines(Day);
             if (!input.Any())
             {
                 AnsiConsole.MarkupLine($"[red]Error Day [blue]{Day}[/]; Part [blue]1[/]: No {(useTestData ? "test " : "")}input available[/]");

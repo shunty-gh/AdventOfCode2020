@@ -14,10 +14,9 @@ namespace Shunty.AdventOfCode2020
 
         public async Task Execute(IConfiguration config, ILogger logger, bool useTestData)
         {
-            await AoCUtils.GetDayInput(config, Day, "");
-            var input = useTestData
+            var input = await (useTestData
                 ? AoCUtils.GetTestLines(Day)
-                : AoCUtils.GetDayLines(Day);
+                : AoCUtils.GetDayLines(Day));
             if (!input.Any())
             {
                 AnsiConsole.MarkupLine($"[red]Error Day [blue]{Day}[/]; Part [blue]1[/]: No {(useTestData ? "test " : "")}input available[/]");
@@ -27,8 +26,6 @@ namespace Shunty.AdventOfCode2020
 
             AnsiConsole.MarkupLine($"[white]Day [blue]{Day}[/]; Part [blue]1[/]:[/] [yellow]{part1}[/]");
             AnsiConsole.MarkupLine($"[white]Day [blue]{Day}[/]; Part [blue]2[/]:[/] [yellow]{part2}[/]");
-
-            await Task.CompletedTask;
         }
     }
 }
