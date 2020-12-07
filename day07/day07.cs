@@ -4,109 +4,45 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Serilog;
-using Spectre.Console;
 
 namespace Shunty.AdventOfCode2020
 {
-    public class Day07 : IAoCRunner
+    public class Day07 : AoCRunnerBase
     {
-        public int Day => 7;
-
-        public async Task Execute(IConfiguration config, ILogger logger, bool useTestData)
+        public override async Task Execute(IConfiguration config, ILogger logger, bool useTestData)
         {
-            var input = await (useTestData
-                ? AoCUtils.GetTestLines(Day)
-                : AoCUtils.GetDayLines(Day));
-            if (!input.Any())
+            var input = await GetInputLines(useTestData);
+            // Parse the input, get a collection of bags and the bags that they contain
+            var bags = input
+                .Select(line => line.Trim('.').Split(" bags contain "))
+                .Select(splits => (splits[0], splits[1].Replace(" bags", "").Replace(" bag", "")))
+                .ToDictionary(m =>
+                    m.Item1,
+                    m => m.Item2.StartsWith("no other")
+                        ? new (int, string)[] {}
+                        : m.Item2.Split(", ").Select(v => (int.Parse(v.Split(' ')[0]), v.Substring(v.IndexOf(' ')).Trim())));
+
+            // Create a secondary "index" collection to link bags with their containing (parent) bag(s).
+            // This is not strictly necessary but it makes part 1 much quicker and the recursive code a little neater.
+            var parents = new Dictionary<string, IList<string>>();
+            foreach (var bag in bags)
             {
-                AnsiConsole.MarkupLine($"[red]Error Day [blue]{Day}[/]; Part [blue]1[/]: No {(useTestData ? "test " : "")}input available[/]");
-            }
-            var map = BuildMap(input);
-            var shinygold = map["shiny gold"];
-            var containers = FindOuterContainers(shinygold);
-            var part1 = containers.Count();
-            var part2 = CountContainedBags(shinygold);
-            AnsiConsole.MarkupLine($"[white]Day [blue]{Day}[/]; Part [blue]1[/]:[/] [yellow]{part1}[/]");
-            AnsiConsole.MarkupLine($"[white]Day [blue]{Day}[/]; Part [blue]2[/]:[/] [yellow]{part2}[/]");
-        }
-
-        private Dictionary<string, Node> BuildMap(IEnumerable<string> input)
-        {
-            var result = new Dictionary<string, Node>();
-            foreach (var line in input)
-            {
-                var splits = line.Split("bags contain");
-                var key = splits[0].Trim();
-                if (!result.ContainsKey(key))
+                parents.TryAdd(bag.Key, new List<string>());
+                foreach (var ch in bag.Value)
                 {
-                    result.Add(key, new Node(key));
-                }
-                var bag = result[key];
-
-                if (splits[1].Trim().StartsWith("no other bags"))
-                    continue;
-
-                var contains = splits[1].Split(',')
-                    .Select(c => c.Replace("bags", "")
-                        .Replace("bag", "")
-                        .Trim('.')
-                        .Trim());
-
-                foreach (var child in contains)
-                {
-                    var firstspace = child.IndexOf(' ');
-                    var count = int.Parse(child.Substring(0, firstspace));
-                    var ckey = child.Substring(firstspace).Trim();
-                    if (!result.ContainsKey(ckey))
-                    {
-                        result.Add(ckey, new Node(ckey));
-                    }
-                    bag.AddChild(result[ckey], count);
+                    parents.TryAdd(ch.Item2, new List<string>());
+                    parents[ch.Item2].Add(bag.Key);
                 }
             }
-            return result;
+
+            ShowResult(1, ContainersFor(parents, "shiny gold").Count());
+            ShowResult(2, ContainedCount(bags, "shiny gold"));
         }
 
-        private IEnumerable<Node> FindOuterContainers(Node node)
-        {
-            var result = new Dictionary<string, Node>();
-            foreach (var parent in node.Parents)
-            {
-                result.TryAdd(parent.Key, parent);
-                var containers = FindOuterContainers(parent);
-                foreach (var container in containers)
-                {
-                    result.TryAdd(container.Key, container);
-                }
-            }
-            return result.Values.AsEnumerable();
-        }
+        private IEnumerable<string> ContainersFor(Dictionary<string, IList<string>> map, string key) =>
+            map[key].Union(map[key].SelectMany(p => ContainersFor(map, p)));
 
-        private int CountContainedBags(Node node)
-        {
-            var result = 0;
-            foreach (var child in node.Children)
-            {
-                result += child.Item1 + (child.Item1 * CountContainedBags(child.Item2));
-            }
-            return result;
-        }
-
-        private class Node
-        {
-            public Node(string key)
-            {
-                Key = key;
-            }
-            public string Key { get; }
-            public IList<Node> Parents { get; } = new List<Node>();
-            public IList<(int, Node)> Children { get; } = new List<(int, Node)>();
-
-            public void AddChild(Node child, int count)
-            {
-                Children.Add((count, child));
-                child.Parents.Add(this);
-            }
-        }
+        private int ContainedCount(Dictionary<string, IEnumerable<(int Count, string Key)>> map, string key) =>
+            map[key].Sum(c => c.Count + (c.Count * ContainedCount(map, c.Key)));
     }
 }
