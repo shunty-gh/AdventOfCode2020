@@ -111,7 +111,7 @@ namespace Shunty.AdventOfCode2020
             var assembly = Assembly.GetExecutingAssembly();
             foreach (Type type in assembly.GetTypes())
             {
-                if (typeof(IAoCRunner).IsAssignableFrom(type) && type != typeof(IAoCRunner) && !type.IsAbstract)
+                if (typeof(IAoCRunner).IsAssignableFrom(type) && type != typeof(IAoCRunner) && !type.IsAbstract && type != typeof(Day00))
                 {
                     if (Activator.CreateInstance(type) is IAoCRunner dr)
                     {
