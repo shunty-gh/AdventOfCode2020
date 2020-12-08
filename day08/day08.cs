@@ -12,7 +12,7 @@ namespace Shunty.AdventOfCode2020
         public override async Task Execute(IConfiguration config, ILogger logger, bool useTestData)
         {
             var input = await GetInputLines(useTestData);
-            int part1 = 0, part2 = 0, faultindex = 0;
+            int part1 = 0, part2 = 0, faultindex = -1;
             IList<string> patched;
             (part1, _) = RunProgram(input);
             var fault = true;
@@ -28,11 +28,11 @@ namespace Shunty.AdventOfCode2020
         private (IList<string>, int) PatchInput(IList<string> source, int startindex)
         {
             var result = new List<string>();
-            var faultindex = 0;
+            var faultindex = -1;
             for (var i = 0; i < source.Count; i++)
             {
                 var line = source[i];
-                if (i > startindex && faultindex == 0)
+                if (i > startindex && faultindex < 0)
                 {
                     switch (line.Substring(0, 3))
                     {
