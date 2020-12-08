@@ -12,6 +12,8 @@ func GetInputStrings(inputFile string) ([]string, error) {
 		return nil, err
 	}
 	src := strings.Replace(string(txt), "\r\n", "\n", -1)
+	// Strip the last line if it is empty
+	src = strings.TrimSuffix(src, "\n")
 	return strings.Split(src, "\n"), nil
 }
 
