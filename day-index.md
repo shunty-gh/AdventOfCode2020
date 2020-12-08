@@ -35,7 +35,7 @@ Convert string to binary
 Character processing in strings, Distinct/Intersection
 
 ### Day 7 - Handy Haversacks
-Parent/child relationships. Find parents for child, count children. Recursion (not obligatory).
+Parent/child relationships. Find parents for child, count children. Recursion (not obligatory). BFS in Go.
 
 ### Day 8 -
 

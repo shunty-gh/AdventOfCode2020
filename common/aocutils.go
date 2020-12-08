@@ -11,7 +11,8 @@ func GetInputStrings(inputFile string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	return strings.Split(string(txt), "\n"), nil
+	src := strings.Replace(string(txt), "\r\n", "\n", -1)
+	return strings.Split(src, "\n"), nil
 }
 
 func GetInputIntegers(inputFile string) ([]int, error) {
