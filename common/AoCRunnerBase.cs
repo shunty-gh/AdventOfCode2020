@@ -40,6 +40,18 @@ namespace Shunty.AdventOfCode2020
             return result;
         }
 
+        protected async Task<IList<int>> GetInputInts(bool useTestData = false)
+        {
+            var lines = await GetInputLines(useTestData);
+            return lines.Select(l => int.Parse(l)).ToList();
+        }
+
+        protected async Task<IList<Int64>> GetInputInt64(bool useTestData = false)
+        {
+            var lines = await GetInputLines(useTestData);
+            return lines.Select(l => Int64.Parse(l)).ToList();
+        }
+
         protected void ShowResult<T>(int part, T result)
         {
             AnsiConsole.MarkupLine($"[white]Day [blue]{Day}[/]; Part [blue]{part}[/]:[/] [yellow]{result}[/]");
