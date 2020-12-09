@@ -38,9 +38,7 @@ namespace Shunty.AdventOfCode2020
 
                 for (var j = startIndex; j < startIndex + length; j++)
                 {
-                    if (i == j)
-                        continue;
-                    if (source[i] + source[j] == target)
+                    if ((i != j) && (source[i] + source[j] == target))
                         return true;
                 }
             }
@@ -62,6 +60,20 @@ namespace Shunty.AdventOfCode2020
             var range = source.Skip(lb).Take(ub - lb); // or, perhaps, source.ToArray()[lb..ub] in later C# versions
             return range.Min() + range.Max();
         }
+
+        // Something about this method makes me feel dirty:
+        // private Int64 FindContiguous(IList<Int64> source, Int64 target)
+        // {
+        //     foreach (var len in Enumerable.Range(2, source.Count))
+        //     {
+        //         foreach (var i in Enumerable.Range(0, source.Count - len))
+        //         {
+        //             if (source.Skip(i).Take(len).Sum() == target)
+        //                 return source.Skip(i).Take(len).Min() + source.Skip(i).Take(len).Max();
+        //         }
+        //     }
+        //     return 0;
+        // }
 
         // or a brute force method
         // private Int64 FindContiguous(IList<Int64> source, Int64 target)
