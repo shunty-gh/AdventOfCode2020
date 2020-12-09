@@ -47,24 +47,41 @@ namespace Shunty.AdventOfCode2020
             return false;
         }
 
+        // Using a sliding window. Making assumption that there will be
+        // at least one valid sum (ie so that ub doesn't overflow)
         private Int64 FindContiguous(IList<Int64> source, Int64 target)
         {
-            int lb, ub = 0;
-            for (lb = 0; lb < source.Count; lb++)
+            Int64 sum = 0;
+            int lb = 0, ub = 0;
+            while (sum != target)
             {
-                Int64 sum = 0, min = source[lb], max = source[lb];
-                ub = lb;
-                while (sum < target && ub < source.Count)
-                {
-                    if (source[ub] < min) min = source[ub];
-                    else if (source[ub] > max) max = source[ub];
-
-                    sum += source[ub++];
-                }
-                if (sum == target)
-                    return min + max;
+                sum += source[ub++];
+                while (sum > target)
+                    sum -= source[lb++];
             }
-            return 0;
+            var range = source.Skip(lb).Take(ub - lb); // or, perhaps, source.ToArray()[lb..ub] in later C# versions
+            return range.Min() + range.Max();
         }
+
+        // or a brute force method
+        // private Int64 FindContiguous(IList<Int64> source, Int64 target)
+        // {
+        //     int lb, ub = 0;
+        //     for (lb = 0; lb < source.Count; lb++)
+        //     {
+        //         Int64 sum = 0, min = source[lb], max = source[lb];
+        //         ub = lb;
+        //         while (sum < target && ub < source.Count)
+        //         {
+        //             if (source[ub] < min) min = source[ub];
+        //             else if (source[ub] > max) max = source[ub];
+
+        //             sum += source[ub++];
+        //         }
+        //         if (sum == target)
+        //             return min + max;
+        //     }
+        //     return 0;
+        // }
     }
 }
