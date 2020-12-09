@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	input, err := aocutils.GetInputStrings("./day08-input.txt")
+	input, err := aocutils.GetInputStrings(aocutils.FindInputFile(8))
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -16,7 +16,7 @@ type bag struct {
 }
 
 func main() {
-	input, err := aocutils.GetInputStrings("./day07-input.txt")
+	input, err := aocutils.GetInputStrings(aocutils.FindInputFile(7))
 	if err != nil {
 		log.Fatal(err)
 	}
