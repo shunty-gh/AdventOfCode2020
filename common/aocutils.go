@@ -65,7 +65,7 @@ func GetInputIntegers(inputFile string) ([]int, error) {
 
 	result := make([]int, len(input))
 	for i, s := range input {
-		v, err := strconv.Atoi(strings.Trim(s, "\r\n"))
+		v, err := strconv.Atoi(s) //strings.Trim(s, "\r\n"))
 		if err != nil {
 			return nil, err
 		}
@@ -137,4 +137,11 @@ func MinMaxInt64(values ...int64) (int64, int64) {
 		}
 	}
 	return min, max
+}
+
+func AbsInt(value int) int {
+	if value < 0 {
+		return -value
+	}
+	return value
 }
