@@ -17,6 +17,12 @@ namespace Shunty.AdventOfCode2020
                 .Select(s => s == "x" ? 0 : int.Parse(s))
                 .ToList();
 
+            ShowResult(1, Part1(buses, est));
+            ShowResult(2, Part2(buses));
+        }
+
+        private int Part1(IList<int> buses, int estimate)
+        {
             var busid = 0;
             var earliest = int.MaxValue;
             foreach (var bus in buses)
@@ -24,18 +30,40 @@ namespace Shunty.AdventOfCode2020
                 if (bus == 0)
                     continue;
 
-                var x = bus - (est % bus);
+                var x = bus - (estimate % bus);
                 if (x < earliest)
                 {
                     busid = bus;
                     earliest = x;
                 }
             }
-            var part1 = busid * earliest;
-            var part2 = 0;
+            return busid * earliest;
+        }
 
-            ShowResult(1, part1);
-            ShowResult(2, part2);
+        private Int64 Part2(IList<int> buses)
+        {
+            var mult = 0L;
+            var test = 0L;
+
+            var pairs = buses.Select((b, i) => (i,b)).Where(x => x.b != 0).ToList();
+            var (idx, start) = pairs.OrderByDescending(x => x.b).First();
+
+            var found = false;
+            while (!found)
+            {
+                mult++;
+                test = (start * mult) - idx;
+                found = true;
+                foreach (var (busindex, bus) in pairs)
+                {
+                    if ((test + busindex) % bus != 0)
+                    {
+                        found = false;
+                        break;
+                    }
+                }
+            }
+            return test;
         }
     }
 }
