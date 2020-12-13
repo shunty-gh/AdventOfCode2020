@@ -48,8 +48,8 @@ namespace Shunty.AdventOfCode2020
             foreach (var (i, next) in pairs.Skip(1))
             {
                 // Find match for this bus and previous result
-                // Find multiple of prev (t) that matches
-                // (this bus) * y = t + i
+                // Increment t by ((prev increment amount) * next bus id)
+                // 'cos bus Ids are prime
                 mul = 0;
                 while (true)
                 {
@@ -63,7 +63,6 @@ namespace Shunty.AdventOfCode2020
                         break;
                     }
                 }
-
             }
 
             return t;
