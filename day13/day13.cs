@@ -42,28 +42,31 @@ namespace Shunty.AdventOfCode2020
 
         private Int64 Part2(IList<int> buses)
         {
-            var mult = 0L;
-            var test = 0L;
-
             var pairs = buses.Select((b, i) => (i,b)).Where(x => x.b != 0).ToList();
-            var (idx, start) = pairs.OrderByDescending(x => x.b).First();
 
-            var found = false;
-            while (!found)
+            Int64 t = buses[0], prev = buses[0], mul = 0, incr = buses[0];
+            foreach (var (i, next) in pairs.Skip(1))
             {
-                mult++;
-                test = (start * mult) - idx;
-                found = true;
-                foreach (var (busindex, bus) in pairs)
+                // Find match for this bus and previous result
+                // Find multiple of prev (t) that matches
+                // (this bus) * y = t + i
+                mul = 0;
+                while (true)
                 {
-                    if ((test + busindex) % bus != 0)
+                    mul++;
+                    var test = t + (mul * incr);
+                    if ((test + i) % next == 0)
                     {
-                        found = false;
+                        t = test;
+                        incr = incr * next;
+                        prev = next;
                         break;
                     }
                 }
+
             }
-            return test;
+
+            return t;
         }
     }
 }
