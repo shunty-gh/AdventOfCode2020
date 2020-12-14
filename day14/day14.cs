@@ -12,13 +12,17 @@ namespace Shunty.AdventOfCode2020
         public override async Task Execute(IConfiguration config, ILogger logger, bool useTestData)
         {
             var input = await GetInputLines(useTestData);
-            var part1 = 0L;
-            var part2 = 0;
 
             var s = input.Select(l => l.Split(" = ")).ToList();
+            ShowResult(1, Part1(s));
+            ShowResult(2, Part2(s));
+        }
+
+        private Int64 Part1(IList<string[]> instructions)
+        {
             Int64 maskAnd = 0, maskOr = 0;
             var regs = new Dictionary<int, Int64>();
-            foreach (var inst in s)
+            foreach (var inst in instructions)
             {
                 if (inst[0].StartsWith("mask"))
                 {
@@ -34,9 +38,54 @@ namespace Shunty.AdventOfCode2020
                     regs[reg] = v;
                 }
             }
-            part1 = regs.Sum(r => r.Value);
-            ShowResult(1, part1);
-            ShowResult(2, part2);
+            return regs.Sum(r => r.Value);
+        }
+
+        private Int64 Part2(IList<string[]> instructions)
+        {
+            var mask = "";
+            var regs = new Dictionary<Int64, Int64>();
+            foreach (var inst in instructions)
+            {
+                if (inst[0].StartsWith("mask"))
+                {
+                    mask = inst[1];
+                    continue;
+                }
+
+                // Apply mask (including Xs) to address
+                var reg = Int64.Parse(inst[0].Trim(']').Substring(4));
+                var regstr = Convert.ToString(reg, 2).PadLeft(36, '0');
+                // Apply mask to reg
+                var maskedreg = new char[36];
+                for (var i = 0; i < 36; i++)
+                {
+                    maskedreg[i] = mask[i] == '0' ? regstr[i] : mask[i];
+                }
+                // Make a note of the index positions of the X chars
+                var xpos = mask.Select((c,i) => (c, i))
+                    .Where(cc => cc.c == 'X')
+                    .Select(cc => cc.i);
+
+                // Get all combinations
+                var xcount = xpos.Count();
+                var combinations = 1 << xcount;
+                for (var comb = 0; comb < combinations; comb++)
+                {
+                    var maskoverlay = Convert.ToString(comb, 2).PadLeft(xcount, '0');
+                    var mindex = 0;
+                    var chs = maskedreg.ToArray();
+                    foreach (var i in xpos)
+                    {
+                        chs[i] = maskoverlay[mindex];
+                        mindex++;
+                    }
+
+                    var newreg = Convert.ToInt64(new string(chs), 2);
+                    regs[newreg] = Int64.Parse(inst[1]);
+                }
+            }
+            return regs.Sum(r => r.Value);
         }
     }
 }
