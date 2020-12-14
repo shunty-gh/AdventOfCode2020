@@ -53,37 +53,31 @@ namespace Shunty.AdventOfCode2020
                     continue;
                 }
 
-                // Apply mask (including Xs) to address
-                var reg = Int64.Parse(inst[0].Trim(']').Substring(4));
-                var regstr = Convert.ToString(reg, 2).PadLeft(36, '0');
-                // Apply mask to reg
-                var maskedreg = new char[36];
-                for (var i = 0; i < 36; i++)
-                {
-                    maskedreg[i] = mask[i] == '0' ? regstr[i] : mask[i];
-                }
-                // Make a note of the index positions of the X chars
-                var xpos = mask.Select((c,i) => (c, i))
-                    .Where(cc => cc.c == 'X')
-                    .Select(cc => cc.i);
+                // Get the address in the same format as the mask
+                var addr = Int64.Parse(inst[0].Trim(']').Substring(4));
+                var addrstr = Convert.ToString(addr, 2).PadLeft(36, '0');
 
-                // Get all combinations
-                var xcount = xpos.Count();
-                var combinations = 1 << xcount;
-                for (var comb = 0; comb < combinations; comb++)
+                var addresses = new List<Int64>{0};
+                for (var i = 35; i >= 0; i--) // iterate through the mask/address 'bits'
                 {
-                    var maskoverlay = Convert.ToString(comb, 2).PadLeft(xcount, '0');
-                    var mindex = 0;
-                    var chs = maskedreg.ToArray();
-                    foreach (var i in xpos)
+                    // Apply the mask if necessary
+                    var ch = mask[i] == '0' ? addrstr[i] : mask[i];
+                    if (ch == '0') // sum remains the same, move on
+                        continue;
+
+                    var alen = addresses.Count;
+                    for (var ai = 0; ai < alen; ai++)
                     {
-                        chs[i] = maskoverlay[mindex];
-                        mindex++;
+                        // An 'X' means we need a sum for both 0 and 1 possibilities
+                        if (ch == 'X') // add a new sum for the '0' possibility
+                        {
+                            addresses.Add(addresses[ai]);
+                        }
+                        addresses[ai] += 1L << (35 - i);
                     }
-
-                    var newreg = Convert.ToInt64(new string(chs), 2);
-                    regs[newreg] = Int64.Parse(inst[1]);
                 }
+                var v = Int64.Parse(inst[1]);
+                addresses.ForEach(a => regs[a] = v);
             }
             return regs.Sum(r => r.Value);
         }
