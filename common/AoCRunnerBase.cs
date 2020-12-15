@@ -54,7 +54,7 @@ namespace Shunty.AdventOfCode2020
 
         protected void ShowResult<T>(int part, T result)
         {
-            AnsiConsole.MarkupLine($"[white]Day [blue]{Day}[/]; Part [blue]{part}[/]:[/] [yellow]{result}[/]");
+            AnsiConsole.MarkupLine($" [white]Day [blue]{Day}[/]; Part [blue]{part}[/]:[/] [yellow]{result}[/]");
         }
     }
 }

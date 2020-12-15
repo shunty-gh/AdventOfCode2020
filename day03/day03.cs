@@ -8,20 +8,11 @@ using Spectre.Console;
 
 namespace Shunty.AdventOfCode2020
 {
-    public class Day03 : IAoCRunner
+    public class Day03 : AoCRunnerBase
     {
-        public int Day => 3;
-
-        public async Task Execute(IConfiguration config, ILogger logger, bool useTestData)
+        public override async Task Execute(IConfiguration config, ILogger logger, bool useTestData)
         {
-            var input = await (useTestData
-                ? AoCUtils.GetTestLines(Day)
-                : AoCUtils.GetDayLines(Day));
-            if (!input.Any())
-            {
-                AnsiConsole.MarkupLine($"[red]Error Day [blue]{Day}[/]: No {(useTestData ? "test " : "")}input available[/]");
-                return;
-            }
+            var input = await GetInputLines(useTestData);
 
             var map = ReadMap(input);
 
@@ -37,8 +28,8 @@ namespace Shunty.AdventOfCode2020
                 part2 *= Traverse(map, route);
             }
 
-            AnsiConsole.MarkupLine($"[white]Day [blue]{Day}[/]; Part [blue]1[/]:[/] [yellow]{part1}[/]");
-            AnsiConsole.MarkupLine($"[white]Day [blue]{Day}[/]; Part [blue]2[/]:[/] [yellow]{part2}[/]");
+            ShowResult(1, part1);
+            ShowResult(2, part2);
         }
 
         private static int Traverse(Dictionary<(int X,int Y), char> map, (int dX, int dY) route)

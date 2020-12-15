@@ -3,25 +3,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Serilog;
-using Spectre.Console;
 
 namespace Shunty.AdventOfCode2020
 {
-    public class Day01 : IAoCRunner
+    public class Day01 : AoCRunnerBase
     {
-        public int Day => 1;
-
-        public async Task Execute(IConfiguration config, ILogger logger, bool useTestData)
+        public override async Task Execute(IConfiguration config, ILogger logger, bool useTestData)
         {
-            var input = (await (useTestData
-                ? AoCUtils.GetTestLines(Day)
-                : AoCUtils.GetDayLines(Day)))
+            var input = (await GetInputLines(useTestData))
                 .Select(i => Int64.Parse(i));
-            if (!input.Any())
-            {
-                AnsiConsole.MarkupLine($"[red]Error Day [blue]{Day}[/]: No {(useTestData ? "test " : "")}input available[/]");
-                return;
-            }
 
             Int64 part1 = 0, part2 = 0;
             foreach (var i in input)
@@ -50,8 +40,8 @@ namespace Shunty.AdventOfCode2020
                     break;
             }
 
-            AnsiConsole.MarkupLine($"[white]Day [blue]{Day}[/]; Part [blue]1[/]:[/] [yellow]{part1}[/]");
-            AnsiConsole.MarkupLine($"[white]Day [blue]{Day}[/]; Part [blue]2[/]:[/] [yellow]{part2}[/]");
+            ShowResult(1, part1);
+            ShowResult(2, part2);
         }
     }
 }

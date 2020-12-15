@@ -4,25 +4,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Serilog;
-using Spectre.Console;
 
 namespace Shunty.AdventOfCode2020
 {
-    public class Day04 : IAoCRunner
+    public class Day04 : AoCRunnerBase
     {
-        public int Day => 4;
-
         static readonly string[] RequiredFields = new string[] { "byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid" };
         static readonly string[] EyeColours = new string[] {"amb", "blu", "brn", "gry", "grn", "hzl", "oth"};
 
-        public async Task Execute(IConfiguration config, ILogger logger, bool useTestData)
+        public override async Task Execute(IConfiguration config, ILogger logger, bool useTestData)
         {
-            var input = await AoCUtils.GetDayLines(Day);
-            if (!input.Any())
-            {
-                AnsiConsole.MarkupLine($"[red]Error Day [blue]{Day}[/]; Part [blue]1[/]: No {(useTestData ? "test " : "")}input available[/]");
-            }
-
+            var input = await GetInputLines();
             int part1 = 0, part2 = 0;
             var current = new Dictionary<string, string>();
             int lineindex = 0, maxindex = input.Count;
@@ -51,8 +43,8 @@ namespace Shunty.AdventOfCode2020
                 }
             }
 
-            AnsiConsole.MarkupLine($"[white]Day [blue]{Day}[/]; Part [blue]1[/]:[/] [yellow]{part1}[/]");
-            AnsiConsole.MarkupLine($"[white]Day [blue]{Day}[/]; Part [blue]2[/]:[/] [yellow]{part2}[/]");
+            ShowResult(1, part1);
+            ShowResult(2, part2);
         }
 
         private bool AreAllValid(Dictionary<string, string> fields)

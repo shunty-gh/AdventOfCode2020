@@ -1,28 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Serilog;
-using Spectre.Console;
 
 namespace Shunty.AdventOfCode2020
 {
-    public class Day02 : IAoCRunner
+    public class Day02 : AoCRunnerBase
     {
-        public int Day => 2;
-
-        public async Task Execute(IConfiguration config, ILogger logger, bool useTestData)
+        public override async Task Execute(IConfiguration config, ILogger logger, bool useTestData)
         {
-            var input = await (useTestData
-                ? AoCUtils.GetTestLines(Day)
-                : AoCUtils.GetDayLines(Day));
-            if (!input.Any())
-            {
-                AnsiConsole.MarkupLine($"[red]Error Day [blue]{Day}[/]: No {(useTestData ? "test " : "")}input available[/]");
-                return;
-            }
+            var input = await GetInputLines(useTestData);
             int part1 = 0, part2 = 0;
 
             foreach (var line in input)
@@ -49,8 +38,8 @@ namespace Shunty.AdventOfCode2020
                     part2++;
                 }
             }
-            AnsiConsole.MarkupLine($"[white]Day [blue]{Day}[/]; Part [blue]1[/]:[/] [yellow]{part1}[/]");
-            AnsiConsole.MarkupLine($"[white]Day [blue]{Day}[/]; Part [blue]2[/]:[/] [yellow]{part2}[/]");
+            ShowResult(1, part1);
+            ShowResult(2, part2);
         }
     }
 }
