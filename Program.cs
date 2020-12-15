@@ -4,6 +4,7 @@ using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -37,24 +38,33 @@ namespace Shunty.AdventOfCode2020
 
         static async Task Main(string[] args)
         {
-            logger = InitialiseLogging();
+            var timer = Stopwatch.StartNew();
             try
             {
-                AvailableDays = LoadDays().ToList();
+                logger = InitialiseLogging();
+                try
+                {
+                    AvailableDays = LoadDays().ToList();
 
-                await BuildCommandLine()
-                    .UseDefaults()
-                    .Build()
-                    .InvokeAsync(args);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Error running AoC with args: {@Args}", args);
-                AnsiConsole.WriteException(ex);
+                    await BuildCommandLine()
+                        .UseDefaults()
+                        .Build()
+                        .InvokeAsync(args);
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "Error running AoC with args: {@Args}", args);
+                    AnsiConsole.WriteException(ex);
+                }
+                finally
+                {
+                    Serilog.Log.CloseAndFlush();
+                }
             }
             finally
             {
-                Serilog.Log.CloseAndFlush();
+                timer.Stop();
+                AnsiConsole.MarkupLine($"[blue]All completed in [yellow]{timer.ElapsedMilliseconds}[/]ms[/]");
             }
         }
 
@@ -77,17 +87,26 @@ namespace Shunty.AdventOfCode2020
             {
                 try
                 {
-                // Find the appropriate IDayRunner, if one exists, and run it
-                var dr = AvailableDays?.FirstOrDefault(d => d.Day == day);
-                if (dr == null)
-                {
-                    AnsiConsole.MarkupLine($"[red] Unable to find a class to execute for day [yellow]{day}[/][/]");
-                    continue;
-                }
+                    // Find the appropriate IDayRunner, if one exists, and run it
+                    var dr = AvailableDays?.FirstOrDefault(d => d.Day == day);
+                    if (dr == null)
+                    {
+                        AnsiConsole.MarkupLine($"[red] Unable to find a class to execute for day [yellow]{day}[/][/]");
+                        continue;
+                    }
 
-                AnsiConsole.MarkupLine($"[white]-> day [yellow]{day}[/][/]");
-                await dr.Execute(Configuration, logger, test);
-                AnsiConsole.WriteLine();
+                    AnsiConsole.MarkupLine($"[white]-> Day [yellow]{day}[/][/]");
+                    var sw = Stopwatch.StartNew();
+                    try
+                    {
+                        await dr.Execute(Configuration, logger, test);
+                    }
+                    finally
+                    {
+                        sw.Stop();
+                        AnsiConsole.MarkupLine($" [lightsteelblue]Day [blue]{day}[/] completed in [yellow]{sw.ElapsedMilliseconds}[/]ms[/]");
+                    }
+                    AnsiConsole.WriteLine();
                 }
                 catch (Exception ex)
                 {
