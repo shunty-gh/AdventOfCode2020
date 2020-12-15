@@ -19,7 +19,8 @@ namespace Shunty.AdventOfCode2020
             //var input = new List<int> {3,1,2}; // P1 = 1836; P2 = 362
             // Real input
             var input = new List<int> {15,5,1,4,7,0};
-            var previous = new Dictionary<int,int>();
+            var previous = new int[30_000_000]; // Array is much quicker than the Dictionary<> approach
+            // var previous = new Dictionary<int,int>();
             for (var i = 0; i < input.Count - 1; i++) // don't add the last item
             {
                 previous[input[i]] = i + 1;
@@ -28,9 +29,10 @@ namespace Shunty.AdventOfCode2020
 
             while (lastturn < 30_000_000)
             {
-                var alreadyspoken = previous.TryGetValue(lastspoken, out prevspoken);
+                //var alreadyspoken = previous.TryGetValue(lastspoken, out prevspoken);
+                prevspoken = previous[lastspoken];
                 previous[lastspoken] = lastturn;
-                lastspoken = alreadyspoken ? lastturn - prevspoken : 0;
+                lastspoken = prevspoken > 0 ? lastturn - prevspoken : 0;
 
                 lastturn++;
                 if (lastturn == 2020)
@@ -38,6 +40,7 @@ namespace Shunty.AdventOfCode2020
                     part1 = lastspoken;
                 }
             }
+
             ShowResult(1, part1);
             ShowResult(2, lastspoken);
             await Task.CompletedTask;
