@@ -33,14 +33,22 @@ namespace Shunty.AdventOfCode2020
         private Int64 FindArrangements(IList<int> items)
         {
             // Assume items is sorted
-            var possiblePaths = new Dictionary<int, Int64> { { items.Min(), 1 } };
-            foreach (var item in items.Skip(1))
+            var possiblePaths = new Int64[items.Count];
+            possiblePaths[0] = 1;
+            var icount = items.Count;
+
+            for (var i = 0; i < icount; i++)
             {
-                // Find items that could preceed this one and sum their paths
-                var possibles = items.Where(i => (item > i) && (item <= i + 3));
-                possiblePaths[item] = possibles.Sum(p => possiblePaths[p]);
+                var pcount = possiblePaths[i];
+                // Find paths from here to next possible candidates
+                for (var j = 1; j <= 3; j++)
+                {
+                    if (i+j >= icount || items[i+j] > items[i] + 3)
+                        break;
+                    possiblePaths[i+j] += pcount;
+                }
             }
-            return possiblePaths[items.Max()];
+            return possiblePaths[icount - 1];
         }
     }
 }
