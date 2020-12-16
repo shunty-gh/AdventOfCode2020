@@ -21,7 +21,7 @@ namespace Shunty.AdventOfCode2020
                     if (part1 == 0 && i + j == 2020)
                         part1 = i * j;
 
-                    if (part2 == 0)
+                    if (part2 == 0 && i + j <= 2020)
                     {
                         foreach (var k in input)
                         {

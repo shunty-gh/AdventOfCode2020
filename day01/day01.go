@@ -2,16 +2,12 @@ package main
 
 import (
 	"fmt"
-	"log"
 
 	aocutils "../common"
 )
 
 func main() {
-	input, err := aocutils.GetInputIntegers("./day01-input.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
+	input, _ := aocutils.GetInputIntegers(aocutils.FindInputFile(1))
 
 	var p1, p2 = 0, 0
 
@@ -22,7 +18,7 @@ func main() {
 				p1 = i * j
 			}
 
-			if p2 == 0 {
+			if p2 == 0 && i+j <= 2020 {
 				for _, k := range input {
 					if i+j+k == 2020 {
 						p2 = i * j * k

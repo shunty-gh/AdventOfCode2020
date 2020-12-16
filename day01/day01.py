@@ -12,10 +12,11 @@ for i in input:
         if p1 == 0 and i + j == 2020:
             p1 = i * j
 
-        for k in input:
-            if p2 == 0 and i + j + k == 2020:
-                p2 = i * j * k
-                break
+        if p2 == 0 and i + j <= 2020:
+            for k in input:
+                if i + j + k == 2020:
+                    p2 = i * j * k
+                    break
 
         if p1 > 0 and p2 > 0:
             break
