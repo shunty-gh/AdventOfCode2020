@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Shunty.AdventOfCode2020
@@ -107,6 +108,122 @@ namespace Shunty.AdventOfCode2020
                 var content = await response.Content.ReadAsStringAsync();
                 await File.WriteAllTextAsync(filename, content);
             }
+        }
+    }
+
+    public static class StringHelpers
+    {
+        public static string ReverseString(this string src)
+        {
+            var arr = src.ToCharArray();
+            Array.Reverse(arr);
+            return new string(arr);
+        }
+
+        /// <summary>
+        /// Rotate a list of strings clockwise by a number of 90 degree increments
+        /// </summary>
+        /// <param name="rows">The source list of strings</param>
+        /// <param name="rotateBy">How many increments of 90 degrees clockwise to rotate</param>
+        /// <returns>A new list of strings</returns>
+        public static List<string> Rotate(this List<string> rows, int rotateBy = 1)
+        {
+            // Assume each row has the same length
+            var ylen = rows.Count;
+            var xlen = rows[0].Length;
+            var result = new List<string>(rows);
+
+            var rot = rotateBy % 4;
+            if (rotateBy < 0)
+            {
+                // C# treats (-3 % 4) as -3, not +1
+                rot = (rot + 4) % 4;
+            }
+            if (rot > 0)
+            {
+                var sb = new StringBuilder();
+                while (rot > 0)
+                {
+                    var next = new List<string>();
+                    for (var x = 0; x < xlen; x++)
+                    {
+                        sb.Clear();
+                        for (var y = ylen - 1; y >= 0; y--)
+                        {
+                            sb.Append(result[y][x]);
+                        }
+                        next.Add(sb.ToString());
+                    }
+                    result = next;
+                    rot--;
+                }
+            }
+            return result;
+        }
+
+        public static List<string> FlipAlongHorizontal(this List<string> rows)
+        {
+            var result = new List<string>(rows);
+            result.Reverse();
+            return result;
+        }
+
+        public static List<string> FlipAlongVertical(this List<string> rows)
+        {
+            var result = new List<string>();
+            for (var i = 0; i < rows.Count; i++)
+            {
+                result.Add(rows[i].ReverseString());
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Get a string representing an edge of a rectangular "grid" of strings. The edge returned is
+        /// taken in a clockwise direction so that, eg when rotated the edge value will stay the same.
+        /// ie Top edge is read L to R, bottom edge is R to L. L edge is bottom to top whereas R edge is
+        /// top to bottom.
+        /// </summary>
+        /// <param name="rows">The source list of strings</param>
+        /// <param name="edgeNo">The edge number we require. 0 = top edge, 1 = right, 2 = bottom, 3 = left</param>
+        /// <returns></returns>
+        public static string GetEdge(this List<string> rows, int edgeNo)
+        {
+            if (rows.Count == 0)
+                return "";
+
+            // Assume all rows are the same length
+            var rlen = rows[0].Length;
+            switch (edgeNo)
+            {
+                case 0:
+                    return rows[0];
+                case 1:
+                    return new string(rows.Select(r => r[rlen - 1]).ToArray());
+                case 2:
+                    return rows.Last().ReverseString();
+                case 3:
+                    return new string(rows.Select(r => r[0]).Reverse().ToArray());
+                default:
+                    return "";
+            }
+        }
+
+        public static (int, bool) FindEdge(this List<string> rows, string edgeToFind)
+        {
+            for (var i = 0; i < 4; i++)
+            {
+                var e = rows.GetEdge(i);
+                if (e == edgeToFind)
+                {
+                    return (i, false);
+                }
+                else if (e.ReverseString() == edgeToFind)
+                {
+                    return (i, true);
+                }
+            }
+            return (-1, false);
         }
     }
 }
