@@ -9,6 +9,13 @@ namespace Shunty.AdventOfCode2020
 {
     public class Day23 : AoCRunnerBase
     {
+        public class Node
+        {
+            public Node Previous { get; set; }
+            public Node Next { get; set; }
+            public int Value { get; set; }
+        }
+
         public override async Task Execute(IConfiguration config, ILogger logger, bool useTestData)
         {
             var input = (await GetInputLines(useTestData))
@@ -16,65 +23,99 @@ namespace Shunty.AdventOfCode2020
                 .Select(c => (int)Char.GetNumericValue(c))
                 .ToArray();
 
-            Func<int[], int, int> IndexOfDest = (a, d) => {
-                for (var i = 0; i < a.Length; i++)
-                {
-                    if (a[i] == d)
-                        return i;
-                }
-                return -1; // Should never happen
-            };
-            var a1 = input.ToArray();
-            var a2 = new int[a1.Length * 2];
-            var next3 = new int[3];
-            int ci = 0, di = 0, curr = 0, dest = 0;
-            for (var move = 1; move <= 100; move++)
+            // *** Part 1
+            var (nodes, head) = BuildNodes(input, 9);
+            DoMoves(nodes, head, 100, 9);
+
+            var part1 = "";
+            var nd = nodes[1].Next;
+            for (var i = 1; i < 9; i++)
             {
-                curr = a1[ci];
-                for (var n = 0; n < 3; n++)
+                part1 += nd.Value;
+                nd = nd.Next;
+            }
+            ShowResult(1, part1);
+
+            // *** Part 2
+            (nodes, head) = BuildNodes(input, 1_000_000);
+            DoMoves(nodes, head, 10_000_000, 1_000_000);
+
+            nd = nodes[1].Next;
+            var part2 = (long)nd.Value * (long)nd.Next.Value;
+            ShowResult(2, part2);
+        }
+
+        private (Node[], Node) BuildNodes(int[] input, int maxValue)
+        {
+            var nodes = new Node[maxValue + 1];
+            var head = new Node { Value = input.First() };
+            nodes[head.Value] = head;
+            var prev = head;
+            for (var i = 1; i < input.Length; i++)
+            {
+                var nd = new Node { Previous = prev, Value = input[i] };
+                nodes[input[i]] = nd;
+                prev.Next = nd;
+                prev = nd;
+            }
+
+            // For part 2 we need to add many extra nodes
+            var imax = input.Max();
+            if (maxValue > imax)
+            {
+                for (var i = imax + 1; i <= maxValue; i++)
                 {
-                    var ni = (ci + 1 + n) % 9;
-                    next3[n] = a1[ni];
-                    a1[ni] = 0;
+                    var nd = new Node { Previous = prev, Value = i };
+                    nodes[i] = nd;
+                    prev.Next = nd;
+                    prev = nd;
                 }
-                dest = curr > 1 ? curr - 1 : 9;
-                while (next3.Contains(dest))
+            }
+
+            // Link the head and tail together
+            prev.Next = head;
+            head.Previous = prev;
+
+            return (nodes, head);
+        }
+
+        private void DoMoves(Node[] nodes, Node head, int moves, int maxValue)
+        {
+            var next3Nodes = new Node[3];
+            var next3Values = new int[3];
+
+            for (var move = 1; move <= moves; move++)
+            {
+                // Cut out next three
+                var n = head.Next;
+                for (var i = 0; i < 3; i++)
+                {
+                    next3Nodes[i] = n;
+                    next3Values[i] = n.Value;
+                    n = n.Next;
+                }
+                head.Next = n;
+                n.Previous = head;
+                // Find suitable destination value
+                var dest = head.Value > 1 ? head.Value - 1 : maxValue;
+                while (next3Values.Contains(dest))
                 {
                     dest--;
                     if (dest <= 0)
-                        dest = 9;
+                        dest = maxValue;
                 }
-                di = IndexOfDest(a1, dest);
-                // Rewrite the array
-                a2[0] = dest;
-                a2[1] = next3[0];
-                a2[2] = next3[1];
-                a2[3] = next3[2];
-                var ai = (di + 1) % 9;
-                for (var i = 4; i < a1.Length; i++)
-                {
-                    while (a1[ai] == 0)
-                        ai = (ai + 1) % 9;
-                    a2[i] = a1[ai];
-                    ai = (ai + 1) % 9;
-                }
-                // Swap them over
-                Array.Copy(a2, a1, a1.Length);
-                // Find the new current cup
-                ci = (IndexOfDest(a1, curr) + 1) % 9;
+                // Get the node containing destination
+                n = nodes[dest];
+                // Put the cut nodes back in
+                var tmp = n.Next;
+                n.Next = next3Nodes[0];
+                next3Nodes[0].Previous = n;
+                tmp.Previous = next3Nodes[2];
+                next3Nodes[2].Next = tmp;
+                // Move the head along
+                head = head.Next;
                 //Console.WriteLine(string.Join(", ", a1) + $"; Curr: {a1[ci]}");
             }
-
-            var i1 = IndexOfDest(a1, 1);
-            var part1 = "";
-            for (var i = 1; i < 9; i++)
-            {
-                part1 += a1[(i1 + i) % 9];
-            }
-            var part2 = 0;
-
-            ShowResult(1, part1);
-            ShowResult(2, part2);
         }
     }
 }
