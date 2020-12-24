@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Shunty.AdventOfCode2020
@@ -113,6 +114,21 @@ namespace Shunty.AdventOfCode2020
 
     public static class StringHelpers
     {
+        /// <summary>
+        /// Replace multiple strings with specific replacements. Might be faster than repeated
+        /// use of .Replace() depending on number of replacements and context etc.
+        /// WARNING: Will only work for simple match strings
+        /// </summary>
+        /// <param name="text">The source string</param>
+        /// <param name="replacements">Dictionary of match:replacment pairs</param>
+        /// <returns>A new string with the matched texts replaced</returns>
+        public static string MultiReplace(this string text, Dictionary<string,string> replacements) {
+            return Regex.Replace(text,
+                "(" + string.Join("|", replacements.Keys.ToArray()) + ")",
+                m => replacements[m.Value]
+            );
+        }
+
         public static string ReverseString(this string src)
         {
             var arr = src.ToCharArray();
