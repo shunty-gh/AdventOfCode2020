@@ -11,33 +11,42 @@ namespace Shunty.AdventOfCode2020
         public override async Task Execute(IConfiguration config, ILogger logger, bool useTestData)
         {
             var input = (await GetInputLines(useTestData))
-                .Select(i => Int64.Parse(i));
+                .Select(i => int.Parse(i))
+                .OrderBy(i => i)
+                .ToList();
 
             Int64 part1 = 0, part2 = 0;
-            foreach (var i in input)
+            int icount = input.Count, i = 0, j = 0, k = 0, ij = 0, ijk = 0;
+            for (var ii = 0; ii < icount - 1 && (part1 == 0 || part2 == 0); ii++)
             {
-                foreach (var j in input)
+                i = input[ii];
+                for (var jj = ii + 1; jj < icount && (part1 == 0 || part2 == 0); jj++)
                 {
-                    if (part1 == 0 && i + j == 2020)
+                    j = input[jj];
+                    ij = i + j;
+
+                    if (ij > 2020)
+                        break;
+
+                    if (part1 == 0 && ij == 2020)
                         part1 = i * j;
 
-                    if (part2 == 0 && i + j <= 2020)
+                    if (part2 == 0)
                     {
-                        foreach (var k in input)
+                        for (var kk = jj + 1; kk < icount; kk++)
                         {
-                            if (i + j + k == 2020)
+                            k = input[kk];
+                            ijk = ij + k;
+                            if (ijk > 2020)
+                                break;
+                            if (ijk == 2020)
                             {
                                 part2 = i * j * k;
                                 break;
                             }
                         }
                     }
-
-                    if (part1 > 0 && part2 > 0)
-                        break;
                 }
-                if (part1 > 0 && part2 > 0)
-                    break;
             }
 
             ShowResult(1, part1);
