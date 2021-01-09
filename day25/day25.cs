@@ -16,7 +16,8 @@ namespace Shunty.AdventOfCode2020
             var sn = 7;
             var cardPK = input[0];
             var doorPK = input[1];
-            var cardLoop = FindLoopCount(sn, cardPK);
+            // Don't actually need to find both loop counts
+            //var cardLoop = FindLoopCount(sn, cardPK);
             var doorLoop = FindLoopCount(sn, doorPK);
 
             var ek = Transform(cardPK, doorLoop);
@@ -47,11 +48,6 @@ namespace Shunty.AdventOfCode2020
 
         private Int64 Transform(int sn, int loopCount)
         {
-            /*
-              - Set the value to itself multiplied by the subject number.
-              - Set the value to the remainder after dividing the value by 20201227.
-             */
-
             var curr = 1L;
             for (var i = 0; i < loopCount; i++)
             {
